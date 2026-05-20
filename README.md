@@ -1,16 +1,152 @@
-# React + Vite
+# Cinematic Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern portfolio project with a React + Vite frontend and an Express + MongoDB backend. The app is built for cinematic presentation, smooth scrolling, interactive sections, and contact form submission.
 
-Currently, two official plugins are available:
+## Project Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This repository contains two separate applications:
 
-## React Compiler
+- `frontend/` — React application powered by Vite, Tailwind CSS, and animation libraries.
+- `backend/` — Express server with an optional MongoDB contact message backend.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The frontend provides a cinematic landing experience with sections for Hero, Story Mode, About, Skills, Projects, Experience, Services, Contact, and Footer.
 
-## Expanding the ESLint configuration
+## Workflow Summary
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. Install dependencies in both `backend/` and `frontend/`.
+2. Start the backend server on port `5000`.
+3. Start the frontend development server on port `5173` (default Vite port).
+4. Use the contact form to POST data to `http://localhost:5000/api/contact`.
+5. If `MONGO_URI` is configured, contact form submissions are saved to MongoDB.
+
+## Repository Structure
+
+- backend/
+  - models/
+    - Contact.js         # Mongoose schema for contact submissions
+  - routes/
+    - api.js             # API route for receiving contact messages
+  - server.js            # Express app and MongoDB connection bootstrapping
+  - package.json
+
+- frontend/
+  - public/              # Static assets
+  - src/
+    - components/        # Page sections and UI components
+      - About.jsx
+      - Contact.jsx
+      - Experience.jsx
+      - Footer.jsx
+      - Hero.jsx
+      - Loader.jsx
+      - Projects.jsx
+      - Services.jsx
+      - Skills.jsx
+      - StoryMode.jsx
+      - CustomCursor.jsx
+    - App.jsx            # Main app layout and loading flow
+    - index.css
+    - main.jsx
+  - package.json
+  - vite.config.js
+  - tailwind.config.js
+
+## Backend Details
+
+The backend is a lightweight Express app configured as an ES module:
+
+- `backend/server.js`
+  - Loads environment variables via `dotenv`.
+  - Connects to MongoDB when `MONGO_URI` is provided.
+  - Uses `cors` and `express.json()` for API compatibility.
+  - Serves the `/api/contact` route and a health-check root route.
+
+- `backend/routes/api.js`
+  - Defines `POST /api/contact`.
+  - Accepts `name`, `email`, `subject`, and `message`.
+  - Saves to MongoDB if connected.
+  - Simulates a cinematic delay before responding.
+
+- `backend/models/Contact.js`
+  - Defines the contact message schema with timestamps.
+
+### Backend environment variables
+
+Create a `.env` file in `backend/` with:
+
+```
+MONGO_URI=<your-mongodb-connection-string>
+PORT=5000
+```
+
+If no `MONGO_URI` is present, the server still runs and the frontend contact form continues to work, but messages are not stored.
+
+## Frontend Details
+
+The frontend is a React + Vite application with the following notable features:
+
+- Smooth scrolling using `@studio-freight/lenis`.
+- Intro loading screen in `App.jsx` with a 3-second cinematic transition.
+- Custom cursor and animated section transitions.
+- Contact form in `src/components/Contact.jsx`.
+- `tailwindcss` and `postcss` for styling.
+- `framer-motion` for motion and page animation effects.
+
+### Frontend component flow
+
+`App.jsx` renders the app in this order after loading:
+
+1. `Hero`
+2. `StoryMode`
+3. `About`
+4. `Skills`
+5. `Projects`
+6. `Experience`
+7. `Services`
+8. `Contact`
+9. `Footer`
+
+## Setup and Run
+
+### 1. Backend
+
+```bash
+cd backend
+npm install
+node server.js
+```
+
+### 2. Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### 3. Access the application
+
+- Frontend: `http://localhost:5173`
+- Backend health check: `http://localhost:5000/`
+- Contact API: `http://localhost:5000/api/contact`
+
+## Development Workflow
+
+- Edit the frontend UI inside `frontend/src/components/`.
+- Update page logic and routing in `frontend/src/App.jsx`.
+- Modify backend logic in `backend/routes/api.js` and `backend/models/Contact.js`.
+- Use `MONGO_URI` to enable real database persistence.
+- Run frontend and backend simultaneously in separate terminals.
+
+## Notes
+
+- The backend `package.json` currently includes only runtime dependencies and a placeholder test script.
+- The frontend is configured for modern React and Vite development, including ESLint support.
+- The contact form is currently hard-coded to `http://localhost:5000/api/contact`; update this URL for deployment or proxy configuration.
+
+## Future Improvements
+
+- Add explicit tests for backend and frontend.
+- Add deployment instructions for hosting services.
+- Add a proxy configuration or environment-based API URL in frontend.
+- Add form validation and error handling enhancements.
